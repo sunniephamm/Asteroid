@@ -22,11 +22,11 @@ pygame.display.set_caption("Asteroid")
 
 clock = pygame.time.Clock()
 def draw_background(screen):
-    star = pygame.image.load("Asteroid/assets/sprites/star1.png").convert()
+    star = pygame.image.load("../Asteroid/assets/sprites/star1.png").convert()
     star.set_colorkey((0,0,0))
-    space = pygame.image.load("Asteroid/assets/sprites/darkPurple.png").convert()
+    space = pygame.image.load("../Asteroid/assets/sprites/darkPurple.png").convert()
     space.set_colorkey((0,0,0))
-    planet = pygame.image.load("Asteroid/assets/sprites/planet03.png").convert()
+    planet = pygame.image.load("../Asteroid/assets/sprites/planet03.png").convert()
     planet.set_colorkey((0,0,0))
 
     #make space
@@ -41,7 +41,7 @@ def draw_background(screen):
         screen.blit(star, (x,y))
 
     #draw the planet
-    planet= pygame.image.load("Asteroid/assets/sprites/planet03.png").convert()
+    planet= pygame.image.load("../Asteroid/assets/sprites/planet03.png").convert()
     planet.set_colorkey((0,0,0))
     screen.blit(planet,(screen_width-tile_size+70,0))
 
@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x,y):
         super().__init__()
         #TODO:turn the fish in the opposite direction
-        self.forward_image = pygame.image.load("Asteroid/assets/sprites/playerShip1_blue.png").convert()
+        self.forward_image = pygame.image.load("../Asteroid/assets/sprites/playerShip1_blue.png").convert()
         self.backward_image = pygame.transform.flip(self.forward_image, True, False).convert()
         self.backward_image.set_colorkey((0,0,0))
         self.forward_image.set_colorkey((0, 0, 0))
@@ -98,7 +98,7 @@ class Player(pygame.sprite.Sprite):
 class Rock(pygame.sprite.Sprite):
     def __init__(self, x,y):
         super().__init__()
-        self.image  = pygame.image.load("Asteroid/assets/sprites/meteorGrey_big4.png").convert()
+        self.image  = pygame.image.load("../Asteroid/assets/sprites/meteorGrey_big4.png").convert()
         self.image.set_colorkey((0,0,0))
         self.image = pygame.transform.flip(self.image, True, False)
         self.rect = self.image.get_rect()
