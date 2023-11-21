@@ -40,6 +40,8 @@ def draw_background(screen):
         y = random.randint(0,screen_height)
         screen.blit(star, (x,y))
 
+
+
     #draw the planet
     planet= pygame.image.load("../Asteroid/assets/sprites/planet03.png").convert()
     planet.set_colorkey((0,0,0))
@@ -114,11 +116,16 @@ class Rock(pygame.sprite.Sprite):
         self.y += self.speed
         self.rect.y += self.speed
 
+    def add_rocks(self):
+        for i in range(8):
+            rocks.add(Rock(random.randint(10, 800), random.randint(0, 10)))
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
 rocks = pygame.sprite.Group()
+
+
 #main loop
 running = True
 background = screen.copy()
@@ -127,6 +134,13 @@ draw_background(background)
 #draw the rocks
 for _ in range(5):
     rocks.add(Rock(random.randint(0,screen_width), random.randint(0, screen_height)))
+
+for rock in rocks:
+    if rock.rect.y > 600:
+        rocks.remove(rock)
+        #add_rocks(1)
+
+
 #draw the first player
 player = Player(screen_width/2, screen_height/2)
 
