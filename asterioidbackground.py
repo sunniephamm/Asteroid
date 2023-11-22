@@ -54,7 +54,6 @@ def draw_background(screen):
 class Player(pygame.sprite.Sprite):
     def __init__(self, x,y):
         super().__init__()
-        #TODO:turn the fish in the opposite direction
         self.forward_image = pygame.image.load("../Asteroid/assets/sprites/playerShip1_blue.png").convert()
         self.backward_image = pygame.transform.flip(self.forward_image, True, False).convert()
         self.backward_image.set_colorkey((0,0,0))
@@ -83,7 +82,7 @@ class Player(pygame.sprite.Sprite):
         self.x_speed = 0
 
     def update(self):
-        #TODO to check if player went off the screen
+        #to check if player went off the screen
         #update the x position
         self.x += self.x_speed
         self.y += self.y_speed
@@ -144,7 +143,7 @@ for rock in rocks:#adding more astroids if they leave the screen
 
 
 #draw the first player
-player = Player(screen_width/2, screen_height-80)
+player = Player(screen_width/2, screen_height-100)
 
 #different events that lets us know what key was pressed
 while running:
@@ -170,20 +169,46 @@ while running:
             if event.key == pygame.K_SPACE:
                 print("You pressed the space button")
 
-
-
     screen.blit(background,(0,0,))
+
 #updates the player
     player.update()
     rocks.update()
+
 #draws the player on the screen
     player.draw(screen)
     rocks.draw(screen)
-#flips to show the created game
+    pygame.display.flip()
+
+#adding a score
+score = 0
+score_font = pygame.font.Font("../Asteroid/font/Black_Crayon.ttf", 60)
+result = pygame.sprite.spritecollide(player, rocks, True)
+if result:
+    score += len(result)
+    #for _ in range(len(result)):
+        #add_rock(1)
+    text = score_font.render(f"{score}", True, (255, 29, 0))
+    screen.blit(text, (screen_width / 2-20,50))
+    print(result)
+
+    #flips to show the created game
     pygame.display.flip()
 #sets frames
     clock.tick(60)
 
-pygame.quit()
+    pygame.quit()
 
 
+# create a gameover background
+screen.blit(background,(0,0))
+#game over message
+message  = score_font.render("GAME OVER",True, (0,0,0))
+screen.blit(message, (screen_width/2-message.get_width()/2,screen_height/2))
+
+pygame.display.flip()
+while True:
+    for event in pygame.event.get():
+        if event.type ==pygame.QUIT:
+            pygame.quit()
+            sys.exit()
