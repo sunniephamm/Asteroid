@@ -47,6 +47,10 @@ def draw_background(screen):
     planet.set_colorkey((0,0,0))
     screen.blit(planet,(screen_width-tile_size+70,0))
 
+    #make the laser beams
+    #BLUE_LASER = pygame.transform.scale(pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert(), (9, 57))
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, x,y):
         super().__init__()
@@ -116,9 +120,6 @@ class Rock(pygame.sprite.Sprite):
         self.y += self.speed
         self.rect.y += self.speed
 
-    def add_rocks(self):
-        for i in range(8):
-            rocks.add(Rock(random.randint(10, 800), random.randint(0, 10)))
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -131,18 +132,19 @@ running = True
 background = screen.copy()
 draw_background(background)
 
-#draw the rocks
+#draw the rocks starts from the top and then goes down
 for _ in range(5):
-    rocks.add(Rock(random.randint(0,screen_width), random.randint(0, screen_height)))
+    rocks.add(Rock(random.randint(0,760),random.randint(0, 10)))
 
-for rock in rocks:
-    if rock.rect.y > 600:
+for rock in rocks:#adding more astroids if they leave the screen
+    if rock.rect.y < - rock.rect.height:
         rocks.remove(rock)
-        #add_rocks(1)
+        #add_rock(rocks)
+
 
 
 #draw the first player
-player = Player(screen_width/2, screen_height/2)
+player = Player(screen_width/2, screen_height-80)
 
 #different events that lets us know what key was pressed
 while running:
@@ -164,6 +166,11 @@ while running:
             if event.key == pygame.K_RIGHT:
                 print("You pressed the key right key")
                 player.move_right()
+
+            if event.key == pygame.K_SPACE:
+                print("You pressed the space button")
+
+
 
     screen.blit(background,(0,0,))
 #updates the player
