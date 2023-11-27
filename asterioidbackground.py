@@ -13,7 +13,7 @@ planet_size= 134
 MIN_SPEED = .5 #pixels per frame
 MAX_SPEED = 3
 PLAYER_SPEED = 3.0
-
+score = 0
 NUM_LIVES = 3
 
 #create the screen
@@ -180,28 +180,32 @@ while running:
     rocks.draw(screen)
     pygame.display.flip()
 
+    result = pygame.sprite.spritecollide(player, rocks, True)
+    # print(result)
+    if result:
+        score += len(result)
+        #for _ in range(len(result)):
+#add_rocks(1)
+
 #adding a score
-score = 0
-score_font = pygame.font.Font("../Asteroid/font/Black_Crayon.ttf", 60)
-result = pygame.sprite.spritecollide(player, rocks, True)
-if result:
-    score += len(result)
-    #for _ in range(len(result)):
-        #add_rock(1)
-    text = score_font.render(f"{score}", True, (255, 29, 0))
-    screen.blit(text, (screen_width / 2-20,50))
-    print(result)
+    score_font = pygame.font.Font("../Asteroid/font/Black_Crayon.ttf", 60)
+    if result:
+        score += len(result)
+        #for _ in range(len(result)):
+            #add_rock(1)
+        text = score_font.render(f"{score}", True, (255, 29, 0))
+        screen.blit(text, (screen_width / 2-20,50))
+        print(result)
 
     #flips to show the created game
-    pygame.display.flip()
+        pygame.display.flip()
 #sets frames
-    clock.tick(60)
+        clock.tick(60)
 
-    pygame.quit()
-
-
+        pygame.quit()
 # create a gameover background
 screen.blit(background,(0,0))
+screen.blit(text,screen_width / 2-20,50)
 #game over message
 message  = score_font.render("GAME OVER",True, (0,0,0))
 screen.blit(message, (screen_width/2-message.get_width()/2,screen_height/2))
