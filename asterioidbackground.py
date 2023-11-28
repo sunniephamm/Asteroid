@@ -39,13 +39,15 @@ def draw_background(screen):
         x = random.randint(0, screen_width)
         y = random.randint(0,screen_height)
         screen.blit(star, (x,y))
-
-
-
     #draw the planet
     planet= pygame.image.load("../Asteroid/assets/sprites/planet03.png").convert()
     planet.set_colorkey((0,0,0))
     screen.blit(planet,(screen_width-tile_size+70,0))
+
+def add_rocks(num_rocks):
+    for _ in range(num_rocks):
+        rocks.add(Rock(random.randint(screen_width, screen_width * 2), random.randint(0, screen_height - tile_size)))
+
 
     #make the laser beams
     #BLUE_LASER = pygame.transform.scale(pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert(), (9, 57))
@@ -131,6 +133,7 @@ running = True
 background = screen.copy()
 draw_background(background)
 
+
 #draw the rocks starts from the top and then goes down
 for _ in range(5):
     rocks.add(Rock(random.randint(0,760),random.randint(0, 10)))
@@ -138,7 +141,7 @@ for _ in range(5):
 for rock in rocks:#adding more astroids if they leave the screen
     if rock.rect.y < - rock.rect.height:
         rocks.remove(rock)
-        #add_rock(rocks)
+        add_rocks(rocks)
 
 
 
@@ -180,34 +183,31 @@ while running:
     rocks.draw(screen)
     pygame.display.flip()
 
-    result = pygame.sprite.spritecollide(player, rocks, True)
-    # print(result)
-    if result:
-        score += len(result)
-        #for _ in range(len(result)):
-#add_rocks(1)
 
 #adding a score
+    result = pygame.sprite.spritecollide(player, rocks, True)
     score_font = pygame.font.Font("../Asteroid/font/Black_Crayon.ttf", 60)
     if result:
         score += len(result)
-        #for _ in range(len(result)):
-            #add_rock(1)
+        for _ in range(len(result)):
+            add_rocks(1)
         text = score_font.render(f"{score}", True, (255, 29, 0))
         screen.blit(text, (screen_width / 2-20,50))
         print(result)
 
     #flips to show the created game
-        pygame.display.flip()
+    pygame.display.flip()
 #sets frames
-        clock.tick(60)
+    clock.tick(60)
 
-        pygame.quit()
+pygame.quit()
+
 # create a gameover background
 screen.blit(background,(0,0))
-screen.blit(text,screen_width / 2-20,50)
+screen.blit(text,screen_width,50)
+
 #game over message
-message  = score_font.render("GAME OVER",True, (0,0,0))
+message = score_font.render("GAME OVER",True, (0,0,0))
 screen.blit(message, (screen_width/2-message.get_width()/2,screen_height/2))
 
 pygame.display.flip()
