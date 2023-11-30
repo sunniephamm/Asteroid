@@ -1,7 +1,7 @@
 import pygame
 import random
 import sys
-import os
+
 
 #initialize pygame
 pygame.init()
@@ -135,14 +135,32 @@ rocks = pygame.sprite.Group()
 BLUE_LASER = pygame.transform.scale(pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert(), (9, 57))
 class Laser(pygame.sprite.Sprite):
     speed = -11
+    def __init__(self,x,y):
+        self.image = pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert()
+        self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.vel = [0,0]
 
-    def __init__(self, pos):
-        pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = BLUE_LASER
-        self.rect.centerx = pos
 
     def update(self):
-        self.rect.move(0, self.speed)
+        self.x += self.vel[0]
+        self.y += self.vel[1]
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+lasers = pygame.sprite.Group()
+
+def shoot():
+    l = Laser(player.rect.x, player.rect.y)
+    l.vel = (0, -player.rect.centery)
+    mag = (l.vel[0]**2+l.vel[1]**2)**.5
+    l.vel = [l.vel[0]/mag*5, l.vel[1]/mag*5]
+    lasers.append(l)
 #main loop
 running = True
 background = screen.copy()
@@ -162,7 +180,7 @@ for rock in rocks:#adding more astroids if they leave the screen
 
 #draw the first player
 player = Player(screen_width/2, screen_height-100)
-
+lasers = []
 #different events that lets us know what key was pressed
 while running:
     for event in pygame.event.get():
@@ -185,24 +203,25 @@ while running:
                 player.move_right()
 
             if event.key == pygame.K_SPACE:
-                firing = pygame.K_SPACE
+                shoot()
                 print("You pressed the space button")
 
-            if firing:
-                laser = Laser
-                Laser(player.gunpos())
-                laser.update()
 
     screen.blit(background,(0,0,))
 
 #updates the player
     player.update()
     rocks.update()
+    for laser in lasers:
+        laser.update()
 
 #draws the player on the screen
     player.draw(screen)
     rocks.draw(screen)
+    for laser in lasers:
+        laser.draw(screen)
     pygame.display.flip()
+
 
 
 #adding a score
