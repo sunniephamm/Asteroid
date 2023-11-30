@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import os
 
 #initialize pygame
 pygame.init()
@@ -47,10 +48,6 @@ def draw_background(screen):
 def add_rocks(num_rocks):
     for _ in range(num_rocks):
         rocks.add(Rock(random.randint(screen_width, screen_width * 2), random.randint(0, screen_height - tile_size)))
-
-
-    #make the laser beams
-    #BLUE_LASER = pygame.transform.scale(pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert(), (9, 57))
 
 
 class Player(pygame.sprite.Sprite):
@@ -101,6 +98,12 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.forward_image, self.rect)
+
+    def gunpos(self):
+        pos = self.offset + self.rect.centerx
+        return pos
+
+
 #draw the rocks
 class Rock(pygame.sprite.Sprite):
     def __init__(self, x,y):
@@ -128,6 +131,18 @@ class Rock(pygame.sprite.Sprite):
 rocks = pygame.sprite.Group()
 
 
+
+BLUE_LASER = pygame.transform.scale(pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert(), (9, 57))
+class Laser(pygame.sprite.Sprite):
+    speed = -11
+
+    def __init__(self, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = BLUE_LASER
+        self.rect.centerx = pos
+
+    def update(self):
+        self.rect.move(0, self.speed)
 #main loop
 running = True
 background = screen.copy()
@@ -141,7 +156,7 @@ for _ in range(5):
 for rock in rocks:#adding more astroids if they leave the screen
     if rock.rect.y < - rock.rect.height:
         rocks.remove(rock)
-        add_rocks(rocks)
+        add_rocks()
 
 
 
@@ -170,7 +185,13 @@ while running:
                 player.move_right()
 
             if event.key == pygame.K_SPACE:
+                firing = pygame.K_SPACE
                 print("You pressed the space button")
+
+            if firing:
+                laser = Laser
+                Laser(player.gunpos())
+                laser.update()
 
     screen.blit(background,(0,0,))
 
@@ -191,24 +212,24 @@ while running:
         score += len(result)
         for _ in range(len(result)):
             add_rocks(1)
-        text = score_font.render(f"{score}", True, (255, 29, 0))
-        screen.blit(text, (screen_width / 2-20,50))
-        print(result)
+            print(result)
+    #updates the score on the screen
+    text = score_font.render(f"{score}", True, (255, 29, 0))
+    screen.blit(text, (screen_width / 2-20,50))
+
 
     #flips to show the created game
     pygame.display.flip()
 #sets frames
     clock.tick(60)
 
-pygame.quit()
 
 # create a gameover background
 screen.blit(background,(0,0))
-screen.blit(text,screen_width,50)
-
 #game over message
 message = score_font.render("GAME OVER",True, (0,0,0))
 screen.blit(message, (screen_width/2-message.get_width()/2,screen_height/2))
+screen.blit(text, (screen_width/2-text.get_width()/2, screen_height/3))
 
 pygame.display.flip()
 while True:
