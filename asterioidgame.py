@@ -1,21 +1,11 @@
 import pygame
 import random
 import sys
-
+from rocks import Rock
+from game_para import *
 
 #initialize pygame
 pygame.init()
-
-#game dimensions
-screen_width = 800
-screen_height = 600
-tile_size = 256
-planet_size= 134
-MIN_SPEED = .5 #pixels per frame
-MAX_SPEED = 3
-PLAYER_SPEED = 3.0
-score = 0
-NUM_LIVES = 3
 
 #create the screen
 screen = pygame.display.set_mode((screen_width,screen_height))
@@ -47,7 +37,7 @@ def draw_background(screen):
 
 def add_rocks(num_rocks):
     for _ in range(num_rocks):
-        rocks.add(Rock(random.randint(screen_width, screen_width * 2), random.randint(0, screen_height - tile_size)))
+        rocks.add(Rock(random.randint(0, screen_width ), 0))
 
 
 class Player(pygame.sprite.Sprite):
@@ -99,10 +89,6 @@ class Player(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.forward_image, self.rect)
 
-    def gunpos(self):
-        pos = self.offset + self.rect.centerx
-        return pos
-
 
 #draw the rocks
 class Rock(pygame.sprite.Sprite):
@@ -131,8 +117,6 @@ class Rock(pygame.sprite.Sprite):
 rocks = pygame.sprite.Group()
 
 
-
-BLUE_LASER = pygame.transform.scale(pygame.image.load("../Asteroid/assets/sprites/laserBlue13.png").convert(), (9, 57))
 class Laser(pygame.sprite.Sprite):
     speed = -11
     def __init__(self,x,y):
@@ -156,7 +140,7 @@ class Laser(pygame.sprite.Sprite):
 lasers = pygame.sprite.Group()
 
 def shoot():
-    l = Laser(player.rect.x, player.rect.y)
+    l = Laser(player.rect.x, player.rect.y)     #Remy helped with shooting
     l.vel = (0, -player.rect.centery)
     mag = (l.vel[0]**2+l.vel[1]**2)**.5
     l.vel = [l.vel[0]/mag*5, l.vel[1]/mag*5]
@@ -173,8 +157,7 @@ for _ in range(5):
 
 for rock in rocks:#adding more astroids if they leave the screen
     if rock.rect.y < - rock.rect.height:
-        rocks.remove(rock)
-        add_rocks()
+        add_rocks(5)
 
 
 
