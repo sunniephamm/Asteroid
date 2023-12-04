@@ -1,4 +1,5 @@
 import pygame
+import pygame.mixer
 import random
 import sys
 from rocks import Rock
@@ -7,10 +8,13 @@ from asteroidbackground import *
 from players import Player
 #initialize pygame
 pygame.init()
-
+pygame.mixer.init()
 #create the screen
 screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("Asteroid")
+pygame.mixer.music.load("../Asteroid/MUSIC/Main Title Theme _ Rebel Blockade Runner.mp3")
+
+pygame.mixer.music.play(-1)
 
 clock = pygame.time.Clock()
 def draw_background(screen):
