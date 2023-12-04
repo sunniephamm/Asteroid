@@ -12,9 +12,9 @@ pygame.mixer.init()
 #create the screen
 screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("Asteroid")
-pygame.mixer.music.load("../Asteroid/MUSIC/Main Title Theme _ Rebel Blockade Runner.mp3")
+pygame.mixer.music.load("../Asteroid/MUSIC/Main Title Theme _ Rebel Blockade Runner.mp3")#background music
 
-pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)#indefinite loop of music
 
 clock = pygame.time.Clock()
 def draw_background(screen):
@@ -120,11 +120,11 @@ draw_background(background)
 
 
 #draw the rocks starts from the top and then goes down
-for _ in range(5):
+for _ in range(10):
     rocks.add(Rock(random.randint(0,760),random.randint(0, 10)))
 
 for rock in rocks:#adding more astroids if they leave the screen
-    if rock.rect.y >= rock.rect.height:
+    if rock.rect.y > - rock.rect.height:
         add_rocks(5)
 
 
@@ -163,7 +163,7 @@ while running:
 #updates the player
     player.update()
     rocks.update()
-    for laser in lasers:
+    for laser in lasers:# needs to update since it is moving with the player
         laser.update()
 
 #draws the player on the screen
