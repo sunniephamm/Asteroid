@@ -3,7 +3,8 @@ import random
 import sys
 from rocks import Rock
 from game_para import *
-
+from asteroidbackground import *
+from players import Player
 #initialize pygame
 pygame.init()
 
@@ -40,80 +41,7 @@ def add_rocks(num_rocks):
         rocks.add(Rock(random.randint(0, screen_width ), 0))
 
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, x,y):
-        super().__init__()
-        self.forward_image = pygame.image.load("../Asteroid/assets/sprites/playerShip1_blue.png").convert()
-        self.backward_image = pygame.transform.flip(self.forward_image, True, False).convert()
-        self.backward_image.set_colorkey((0,0,0))
-        self.forward_image.set_colorkey((0, 0, 0))
-        self.rect = self.forward_image.get_rect()
-        self.x = x
-        self.y = y
-        self.rect.center = (x, y)
-        self.x_speed = 0
-        self.y_speed = 0
-
-    def move_up(self):
-        self.y_speed = -1*PLAYER_SPEED
-
-    def move_down(self):
-        self.y_speed = 1*PLAYER_SPEED
-
-    def move_left(self):
-        self.x_speed = -1*PLAYER_SPEED
-
-    def move_right(self):
-        self.x_speed = PLAYER_SPEED
-
-    def stop(self):
-        self.y_speed = 0
-        self.x_speed = 0
-
-    def update(self):
-        #to check if player went off the screen
-        #update the x position
-        self.x += self.x_speed
-        self.y += self.y_speed
-        self.rect.x = self.x
-        self.rect.y = self.y
-        if self.rect.x > screen_width-50:
-            self.x_speed = 0
-        if self.rect.x < 0:
-            self.x_speed = 0
-        if self.rect.y > screen_height-100:
-            self.y_speed = 0
-        if self.rect.y < 0:
-            self.y_speed = 0
-
-    def draw(self, screen):
-        screen.blit(self.forward_image, self.rect)
-
-
 #draw the rocks
-class Rock(pygame.sprite.Sprite):
-    def __init__(self, x,y):
-        super().__init__()
-        self.image  = pygame.image.load("../Asteroid/assets/sprites/meteorGrey_big4.png").convert()
-        self.image.set_colorkey((0,0,0))
-        self.image = pygame.transform.flip(self.image, True, False)
-        self.rect = self.image.get_rect()
-        self.x = 0
-        self.y = 0
-        self.speed = random.uniform(MIN_SPEED, MAX_SPEED)
-        self.rect.center = (x,y)
-
-    def update(self):       #BRODY HELPED MOVE MY ASTEROIDS
-        #update the x position
-        #self.x -= self.speed
-        #self.rect.x = self.x
-        self.y += self.speed
-        self.rect.y += self.speed
-
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
 rocks = pygame.sprite.Group()
 
 
@@ -126,6 +54,7 @@ class Laser(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.vel = [0,0]
+        self.rect.center = (x, y)
 
 
     def update(self):
@@ -145,6 +74,41 @@ def shoot():
     mag = (l.vel[0]**2+l.vel[1]**2)**.5
     l.vel = [l.vel[0]/mag*5, l.vel[1]/mag*5]
     lasers.append(l)
+
+
+def show_instructions(screen):
+    instruction_font = pygame.font.Font(None, 36)
+    title_font = pygame.font.Font(None, 48)
+
+    title_text = title_font.render("Asteroid Game", True, (255, 255, 255))
+    screen.blit(title_text, (screen_width / 2 - title_text.get_width() / 2, 50))
+
+    instructions = [
+        "Welcome to Asteroids! "
+        "Instructions:",
+        "Use Arrow Keys to move the player.",
+        "Press Spacebar to shoot lasers.",
+        "Get points by colliding with the asteroids.",
+        "Press Enter to start the game."
+    ]
+
+    y_offset = 150
+    for text in instructions:
+        text_render = instruction_font.render(text, True, (92, 102, 191))
+        screen.blit(text_render, (screen_width / 2 - text_render.get_width() / 2, y_offset))
+        y_offset += 40
+
+    pygame.display.flip()
+
+    waiting_for_key = True
+    while waiting_for_key:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                waiting_for_key = False
+show_instructions(screen)
 #main loop
 running = True
 background = screen.copy()
@@ -156,7 +120,7 @@ for _ in range(5):
     rocks.add(Rock(random.randint(0,760),random.randint(0, 10)))
 
 for rock in rocks:#adding more astroids if they leave the screen
-    if rock.rect.y < - rock.rect.height:
+    if rock.rect.y >= rock.rect.height:
         add_rocks(5)
 
 
@@ -204,8 +168,6 @@ while running:
     for laser in lasers:
         laser.draw(screen)
     pygame.display.flip()
-
-
 
 #adding a score
     result = pygame.sprite.spritecollide(player, rocks, True)
