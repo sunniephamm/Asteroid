@@ -45,7 +45,7 @@ def add_rocks(num_rocks):
         rocks.add(Rock(random.randint(0, screen_width ), 0))
 
 
-#draw the rocks
+#draw the rocks and initialize
 rocks = pygame.sprite.Group()
 
 
@@ -69,14 +69,14 @@ class Laser(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-
+#initialize the laser group
 lasers = pygame.sprite.Group()
 
 def shoot():
     l = Laser(player.rect.x, player.rect.y)     #Remy helped with shooting
     l.vel = (0, -player.rect.centery)
-    mag = (l.vel[0]**2+l.vel[1]**2)**.5
-    l.vel = [l.vel[0]/mag*5, l.vel[1]/mag*5]
+    mag = (l.vel[0]**2+l.vel[1]**2)**.5 # mag equation
+    l.vel = [l.vel[0]/mag*5, l.vel[1]/mag*5]# Normalize and scale the velocity vector and ensures the velocity stays consistent
     lasers.append(l)
 
 
@@ -123,7 +123,7 @@ draw_background(background)
 for _ in range(10):
     rocks.add(Rock(random.randint(0,760),random.randint(0, 10)))
 
-for rock in rocks:#adding more astroids if they leave the screen
+for rock in rocks:#adding more astroids if they leave the screen?
     if rock.rect.y > - rock.rect.height:
         add_rocks(5)
 
@@ -132,6 +132,12 @@ for rock in rocks:#adding more astroids if they leave the screen
 #draw the first player
 player = Player(screen_width/2, screen_height-100)
 lasers = []
+lasers_group = pygame.sprite.Group()
+
+# Convert lists to sprite groups
+for laser in lasers:
+    lasers_group.add(laser)
+
 #different events that lets us know what key was pressed
 while running:
     for event in pygame.event.get():
@@ -181,6 +187,8 @@ while running:
         for _ in range(len(result)):
             add_rocks(1)
             print(result)
+
+    collsions = pygame.sprite.spritecollide(lasers_group, rocks, True)
     #updates the score on the screen
     text = score_font.render(f"{score}", True, (255, 29, 0))
     screen.blit(text, (screen_width / 2-20,50))
@@ -189,7 +197,7 @@ while running:
     #flips to show the created game
     pygame.display.flip()
 #sets frames
-    clock.tick(60)
+    clock.tick(65)
 
 
 # create a gameover background
